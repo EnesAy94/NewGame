@@ -1,0 +1,8 @@
+*.dll
+*.wasm
+*.exe
+*.pdb
+/PackageCache/
+/Artifacts/
+/Temp/
+/Bee/

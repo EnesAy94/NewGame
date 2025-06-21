@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a46e659c7e569b4d927e8130d4d6d4e, type: 3}
+  m_Name: BT_Cephanelik
+  m_EditorClassIdentifier: 
+  buildingName: Armory
+  maxBuildCount: 5
+  buildingPrefab: {fileID: 1832510371454645342, guid: 5982e03fc23bf7c4d9a08b4aed82c9c7, type: 3}
+  levelSprites:
+  - {fileID: 642752419542264671, guid: ece3e5cdd7dfd3745a84f8826dcdae06, type: 3}
+  - {fileID: 9181181830505887929, guid: 11a8603ed48d95e4995c3ba133c5758c, type: 3}
+  - {fileID: 5210155562020427125, guid: 657c0aa953f3259439525f47b339bf44, type: 3}

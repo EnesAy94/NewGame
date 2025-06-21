@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a46e659c7e569b4d927e8130d4d6d4e, type: 3}
+  m_Name: BT_AnaMerkez
+  m_EditorClassIdentifier: 
+  buildingName: Headquarter
+  maxBuildCount: 1
+  buildingPrefab: {fileID: 1832510371454645342, guid: 5982e03fc23bf7c4d9a08b4aed82c9c7, type: 3}
+  levelSprites:
+  - {fileID: 5782563535291750248, guid: 5489bddb170a9bb43a21c4066228d0e1, type: 3}
+  - {fileID: -3642402655754223288, guid: db14d3ec526db98448a18563c3b5fcbb, type: 3}
+  - {fileID: -5185009217793671719, guid: 85dcfb6cc1a762b45b12a90b4d11f174, type: 3}
