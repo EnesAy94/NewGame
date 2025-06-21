@@ -6,3 +6,4 @@
 /Artifacts/
 /Temp/
 /Bee/
+/Library/
