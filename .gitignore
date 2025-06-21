@@ -2,8 +2,5 @@
 *.wasm
 *.exe
 *.pdb
-/PackageCache/
-/Artifacts/
 /Temp/
-/Bee/
 /Library/
