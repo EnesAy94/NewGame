@@ -36,6 +36,33 @@ public class BuildingInstance : MonoBehaviour, IPointerClickHandler
         }
     }
 
+    public float GetProductionRate()
+    {
+        if (buildingType.producedResource == ResourceType.None)
+            return 0;
+
+        // Üretim = Temel Üretim + (Seviye - 1) * Seviye Başı Artış
+        return buildingType.baseProductionPerHour + ((currentLevel - 1) * buildingType.productionIncreasePerLevel);
+    }
+
+    // Bir sonraki seviyeye yükseltmenin odun maliyetini hesaplar.
+    public int GetNextUpgradeWoodCost()
+    {
+        // Maliyet = Temel Maliyet * (Maliyet Artış Faktörü ^ (Mevcut Seviye - 1))
+        return Mathf.FloorToInt(buildingType.baseUpgradeWoodCost * Mathf.Pow(buildingType.costIncreaseFactor, currentLevel - 1));
+    }
+
+    // Bir sonraki seviyeye yükseltmenin taş maliyetini hesaplar.
+    public int GetNextUpgradeStoneCost()
+    {
+        return Mathf.FloorToInt(buildingType.baseUpgradeStoneCost * Mathf.Pow(buildingType.costIncreaseFactor, currentLevel - 1));
+    }
+    public float storedAmount = 0f;
+    public int GetCurrentCapacity()
+    {
+        return buildingType.baseStorageCapacity + ((currentLevel - 1) * buildingType.capacityIncreasePerLevel);
+    }
+
     // Bu fonksiyon, binanın seviyesine göre doğru görseli ayarlayacak.
     public void UpdateBuildingVisuals()
     {
@@ -91,4 +118,33 @@ public class BuildingInstance : MonoBehaviour, IPointerClickHandler
 
         Debug.Log(buildingType.buildingName + " binası " + currentLevel + ". seviyeye yükseltildi.");
     }
+    
+    // BuildingInstance.cs'in içine bu yeni fonksiyonu ekle
+public void CollectResources()
+{
+    // Toplanacak miktarı tam sayı olarak al.
+    int amountToCollect = (int)storedAmount;
+
+    // Eğer toplanacak bir şey yoksa, hiçbir şey yapma.
+    if (amountToCollect <= 0) return;
+
+    // İlgili kaynağı GameManager'a ekle.
+    switch (buildingType.producedResource)
+    {
+        case ResourceType.Food:
+            GameManager.Instance.AddFood(amountToCollect);
+            break;
+        case ResourceType.Wood:
+            GameManager.Instance.AddWood(amountToCollect);
+            break;
+        case ResourceType.Stone:
+            GameManager.Instance.AddStone(amountToCollect);
+            break;
+    }
+
+    // Binanın içindeki birikmiş miktarı sıfırla.
+    storedAmount = 0f;
+    
+    Debug.Log($"{amountToCollect} {buildingType.producedResource} toplandı!");
+}
 }

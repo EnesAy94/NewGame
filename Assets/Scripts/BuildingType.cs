@@ -1,5 +1,7 @@
 using UnityEngine;
 
+public enum ResourceType { None, Food, Wood, Stone, Gold }
+
 [CreateAssetMenu(fileName = "New Building Type", menuName = "Game/Building Type")]
 public class BuildingType : ScriptableObject
 {
@@ -12,8 +14,16 @@ public class BuildingType : ScriptableObject
     public Sprite[] levelSprites;
 
     [Header("İnşaat Kuralları")]
-    // Bu dizi, her bir binanın hangi Ana Merkez seviyesinde inşa edilebileceğini belirler.
-    // Örn: [1, 6, 12] -> 1. bina için sv. 1, 2. için sv. 6, 3. için sv. 12 gerekir.
-    // Dizinin eleman sayısı, o binadan en fazla kaç tane inşa edilebileceğini de belirler.
     public int[] requiredTownHallLevels;
+
+    [Header("Üretim & Seviye Atlama")]
+    public ResourceType producedResource; // Bu bina hangi kaynağı üretiyor?
+    public float baseProductionPerHour; // 1. seviyedeki saatlik üretim miktarı.
+    public float productionIncreasePerLevel; // Her seviye atladığında üretime ne kadar eklenecek?
+
+    public int baseUpgradeWoodCost; // 1. seviyeden 2'ye geçmenin odun maliyeti.
+    public int baseUpgradeStoneCost; // 1. seviyeden 2'ye geçmenin taş maliyeti.
+    public float costIncreaseFactor; // Her seviye atladığında maliyet ne kadar artacak? (Örn: 1.5 -> %50 artış)
+    public int baseStorageCapacity; // 1. seviyedeki depolama kapasitesi.
+    public int capacityIncreasePerLevel; // Her seviyede kapasite ne kadar artacak?
 }

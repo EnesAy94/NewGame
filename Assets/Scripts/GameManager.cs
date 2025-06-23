@@ -22,6 +22,10 @@ public class GameManager : MonoBehaviour
     // Kaynaklar her değiştiğinde bu olay tetiklenecek.
     public static event Action OnResourcesChanged;
 
+    // Sahnedeki tüm üretim binalarının bir listesi.
+    private List<BuildingInstance> productionBuildings = new List<BuildingInstance>();
+    private float productionTimer = 0f;
+
     private void Awake()
     {
         // Singleton kurulumu
@@ -34,6 +38,63 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
+    void Update()
+    {
+        // Her saniye üretim yap.
+        productionTimer += Time.deltaTime;
+        if (productionTimer >= 1f)
+        {
+            ProduceResources(1f); // 1 saniyelik üretim
+            productionTimer = 0f;
+        }
+    }
+
+     // Bina inşa edildiğinde veya yok edildiğinde bu listeyi güncelleyeceğiz.
+    public void RegisterProductionBuilding(BuildingInstance building)
+    {
+        if (!productionBuildings.Contains(building))
+            productionBuildings.Add(building);
+    }
+
+    public void UnregisterProductionBuilding(BuildingInstance building)
+    {
+        if (productionBuildings.Contains(building))
+            productionBuildings.Remove(building);
+    }
+    
+    // Belirli bir süre için kaynak üretir.
+    private void ProduceResources(float seconds)
+{
+    // Artık bu fonksiyondan sonra OnResourcesChanged çağırmıyoruz,
+    // çünkü kaynaklar sadece binaların içinde birikiyor.
+
+    foreach (var building in productionBuildings)
+    {
+        // Binanın mevcut kapasitesini al.
+        int capacity = building.GetCurrentCapacity();
+
+        // Eğer bina zaten tam kapasitede ise, üretim yapma.
+        if (building.storedAmount >= capacity)
+        {
+            continue; // Döngünün bir sonraki elemanına geç.
+        }
+
+        // Üretim miktarını hesapla.
+        float productionRatePerHour = building.GetProductionRate();
+        float productionPerSecond = productionRatePerHour / 3600f;
+        float producedAmount = productionPerSecond * seconds;
+
+        // Üretilen miktarı binanın deposuna ekle.
+        building.storedAmount += producedAmount;
+
+        // Eğer ekleme sonrası kapasite aşıldıysa, kapasiteye eşitle.
+        if (building.storedAmount > capacity)
+        {
+            building.storedAmount = capacity;
+        }
+    }
+}
 
     public void AddFood(int amount)
     {
@@ -58,7 +119,7 @@ public class GameManager : MonoBehaviour
     }
     public void AddStone(int amount)
     {
-        population += amount;
+        stone += amount;
         OnResourcesChanged?.Invoke();
     }
 

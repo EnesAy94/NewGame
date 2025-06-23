@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI; // Button gibi UI elemanları için bu gerekli.
 using TMPro;         // TextMeshPro kullanacağımız için bu gerekli.
 using System.Collections.Generic;
+using System.Text; // StringBuilder için bu gerekli.
 
 public class BuildManager : MonoBehaviour
 {
@@ -19,6 +20,9 @@ public class BuildManager : MonoBehaviour
     public TextMeshProUGUI buildingNameText;
     public TextMeshProUGUI levelText;
     public Button upgradeButton; // Değişken türünü Button olarak değiştirdik.
+    public TextMeshProUGUI upgradeCostText;
+    public Button collectButton;
+    public TextMeshProUGUI storedAmountText;
 
     // Hafızada tutulan seçili objeler
     private BuildingPlot selectedPlot;
@@ -134,7 +138,28 @@ public class BuildManager : MonoBehaviour
         // Yükseltme butonunun tıklama olayını ayarla.
         upgradeButton.onClick.RemoveAllListeners();
         upgradeButton.onClick.AddListener(UpgradeSelectedBuilding);
+
+        if (building.buildingType.producedResource != ResourceType.None)
+        {
+            collectButton.gameObject.SetActive(true); // Butonu görünür yap
+            collectButton.onClick.RemoveAllListeners();
+            collectButton.onClick.AddListener(CollectFromSelectedBuilding);
+        }
+        else
+        {
+            collectButton.gameObject.SetActive(false); // Üretim binası değilse butonu gizle
+        }
     }
+
+    public void CollectFromSelectedBuilding()
+{
+    if (selectedBuilding == null) return;
+    
+    selectedBuilding.CollectResources();
+    
+    // Toplama sonrası paneli hemen güncelle.
+    UpdateBuildingInfoUI();
+}
 
     public void CloseActivePanel()
     {
@@ -181,6 +206,12 @@ public class BuildManager : MonoBehaviour
         newBuildingInstance.currentLevel = 1;
         newBuildingInstance.UpdateBuildingVisuals();
 
+        // YENİ SATIR: Üretim binası ise GameManager'a kaydettir.
+        if (newBuildingInstance.buildingType.producedResource != ResourceType.None)
+        {
+            GameManager.Instance.RegisterProductionBuilding(newBuildingInstance);
+        }
+
         GameManager.Instance.OnBuildingConstructed(buildingToBuild);
         Destroy(selectedPlot.gameObject);
 
@@ -192,7 +223,16 @@ public class BuildManager : MonoBehaviour
     {
         if (selectedBuilding == null) return;
 
+        int woodCost = selectedBuilding.GetNextUpgradeWoodCost();
+        int stoneCost = selectedBuilding.GetNextUpgradeStoneCost();
+
         // Yükseltme için gerekli kontroller
+        //Kaynak kontrolü
+        if (GameManager.Instance.wood < woodCost || GameManager.Instance.stone < stoneCost)
+        {
+            Debug.Log("Yükseltme için yeterli kaynağınız yok!");
+            return;
+        }
         // Ana Merkez değilse ve seviyesi Ana Merkez seviyesini AŞACAKSA, engelle.
         if (!selectedBuilding.buildingType.name.Contains("AnaMerkez"))
         {
@@ -202,6 +242,10 @@ public class BuildManager : MonoBehaviour
                 return;
             }
         }
+
+        // 2. Kaynakları eksilt
+        GameManager.Instance.AddWood(-woodCost); // Negatif değer göndererek eksiltiyoruz
+        GameManager.Instance.AddStone(-stoneCost);
 
         // Kontrolden geçerse yükseltme işlemini yap.
         selectedBuilding.UpgradeBuilding();
@@ -221,7 +265,36 @@ public class BuildManager : MonoBehaviour
 
         buildingNameText.text = selectedBuilding.buildingType.buildingName;
         levelText.text = "Seviye: " + selectedBuilding.currentLevel + " / 20";
+
+        // Maliyet yazısını oluştur
+        if (selectedBuilding.currentLevel < 20)
+        {
+            int woodCost = selectedBuilding.GetNextUpgradeWoodCost();
+            int stoneCost = selectedBuilding.GetNextUpgradeStoneCost();
+            upgradeCostText.text = $"Maliyet: {woodCost} Odun, {stoneCost} Taş";
+        }
+        else
+        {
+            upgradeCostText.text = "Maksimum Seviye";
+        }
+
         CheckUpgradeButtonState();
+
+        // Biriken kaynak miktarını göster
+    if (selectedBuilding.buildingType.producedResource != ResourceType.None)
+    {
+        storedAmountText.gameObject.SetActive(true);
+        int amount = (int)selectedBuilding.storedAmount; // Gösterirken tam sayıya çevir
+        int capacity = selectedBuilding.GetCurrentCapacity();
+        storedAmountText.text = $"Biriken: {amount} / {capacity}";
+
+        // Eğer toplanacak bir şey yoksa butonu kapat.
+        collectButton.interactable = (amount > 0);
+    }
+    else
+    {
+        storedAmountText.gameObject.SetActive(false);
+    }
     }
 
     // Yükseltme butonunun tıklanabilir olup olmadığını kontrol eder.
