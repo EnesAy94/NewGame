@@ -30,6 +30,7 @@ public class GameManager : MonoBehaviour
 
     // Sahnedeki tüm üretim binalarının bir listesi.
     private List<BuildingInstance> productionBuildings = new List<BuildingInstance>();
+    private List<BuildingInstance> upgradingBuildings = new List<BuildingInstance>();
     private float productionTimer = 0f;
 
     private void Awake()
@@ -53,6 +54,31 @@ public class GameManager : MonoBehaviour
         {
             ProduceResources(1f); // 1 saniyelik üretim
             productionTimer = 0f;
+        }
+        CheckUpgrades();
+
+    }
+
+    public void RegisterForUpgradeCheck(BuildingInstance building)
+    {
+        if (!upgradingBuildings.Contains(building))
+            upgradingBuildings.Add(building);
+    }
+
+    private void CheckUpgrades()
+    {
+        // Listeyi geriye doğru tarıyoruz, çünkü içinden eleman silebiliriz.
+        for (int i = upgradingBuildings.Count - 1; i >= 0; i--)
+        {
+            BuildingInstance building = upgradingBuildings[i];
+
+            // Eğer şimdiki zaman, binanın bitiş zamanını geçtiyse...
+            if (DateTime.Now >= building.upgradeFinishTime)
+            {
+                // Yükseltmeyi tamamla ve listeden çıkar.
+                building.FinishUpgrade();
+                upgradingBuildings.RemoveAt(i);
+            }
         }
     }
 

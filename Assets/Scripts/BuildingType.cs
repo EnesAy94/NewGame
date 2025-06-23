@@ -27,4 +27,6 @@ public class BuildingType : ScriptableObject
     public int baseStorageCapacity; // 1. seviyedeki depolama kapasitesi.
     public int capacityIncreasePerLevel; // Her seviyede kapasite ne kadar artacak?
     public int capacityBonus; // Bu bina inşa edildiğinde veya seviye atladığında ne kadar kapasite verir?
+    public int baseUpgradeTimeInSeconds; // 1. seviyeden 2'ye geçmenin saniye cinsinden süresi.
+    public float timeIncreaseFactor; // Her seviyede süre ne kadar artacak? (Örn: 1.8)
 }

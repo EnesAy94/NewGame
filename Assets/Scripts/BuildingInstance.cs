@@ -1,10 +1,16 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using System;
 
+// Binanın durumlarını yönetmek için bir enum.
+public enum BuildingState { Idle, Upgrading }
 public class BuildingInstance : MonoBehaviour, IPointerClickHandler
 {
     public BuildingType buildingType;
     public int currentLevel = 1;
+
+    public BuildingState currentState = BuildingState.Idle;
+    public DateTime upgradeFinishTime; // Yükseltmenin ne zaman biteceğini saklar.
 
     // Bu binanın SpriteRenderer bileşenine referans.
     private SpriteRenderer spriteRenderer;
@@ -98,26 +104,40 @@ public class BuildingInstance : MonoBehaviour, IPointerClickHandler
     }
 
     // Yükseltme fonksiyonu
-    public void UpgradeBuilding()
+    
+      public int GetNextUpgradeTime()
     {
-        // Max seviye kontrolü
-        if (currentLevel >= 20)
-        {
-            Debug.Log(buildingType.buildingName + " zaten maksimum seviyede!");
-            return;
-        }
+        return Mathf.FloorToInt(buildingType.baseUpgradeTimeInSeconds * Mathf.Pow(buildingType.timeIncreaseFactor, currentLevel - 1));
+    }
 
-        currentLevel++; // Seviyeyi bir artır.
-        UpdateBuildingVisuals(); // Görseli yeni seviyeye göre güncelle.
+    public void StartUpgrade()
+    {
+        if (currentState != BuildingState.Idle) return; // Zaten yükseltiliyorsa bir şey yapma.
 
-        // Eğer bu ana bina ise, GameManager'daki seviyeyi de güncelle.
+        int upgradeTime = GetNextUpgradeTime();
+        currentState = BuildingState.Upgrading;
+        upgradeFinishTime = DateTime.Now.AddSeconds(upgradeTime);
+
+        Debug.Log($"{buildingType.buildingName} yükseltmesi başladı. Bitiş zamanı: {upgradeFinishTime}");
+    }
+
+    // Yükseltme bittiğinde GameManager bu fonksiyonu çağıracak.
+    public void FinishUpgrade()
+    {
+        if (currentState != BuildingState.Upgrading) return;
+
+        currentLevel++;
+        currentState = BuildingState.Idle;
+        UpdateBuildingVisuals();
+        
+        // Kapasite bonusunu uygula.
+        ApplyCapacityBonus();
+
         if (buildingType.name.Contains("AnaMerkez"))
         {
             GameManager.Instance.townHallLevel = currentLevel;
         }
-        // Yükseltme sonrası bonusu uygula.
-        ApplyCapacityBonus();
-        Debug.Log(buildingType.buildingName + " binası " + currentLevel + ". seviyeye yükseltildi.");
+        Debug.Log($"{buildingType.buildingName} yükseltmesi tamamlandı! Yeni seviye: {currentLevel}");
     }
 
     // BuildingInstance.cs'in içine bu yeni fonksiyonu ekle

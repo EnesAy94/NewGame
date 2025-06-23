@@ -29,3 +29,5 @@ MonoBehaviour:
   baseStorageCapacity: 0
   capacityIncreasePerLevel: 25
   capacityBonus: 50
+  baseUpgradeTimeInSeconds: 30
+  timeIncreaseFactor: 1.8

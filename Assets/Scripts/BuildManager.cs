@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI; // Button gibi UI elemanları için bu gerekli.
 using TMPro;         // TextMeshPro kullanacağımız için bu gerekli.
 using System.Collections.Generic;
+using System;
 using System.Text; // StringBuilder için bu gerekli.
 
 public class BuildManager : MonoBehaviour
@@ -21,6 +22,7 @@ public class BuildManager : MonoBehaviour
     public TextMeshProUGUI levelText;
     public Button upgradeButton; // Değişken türünü Button olarak değiştirdik.
     public TextMeshProUGUI upgradeCostText;
+    public TextMeshProUGUI timerText;
     public Button collectButton;
     public TextMeshProUGUI storedAmountText;
 
@@ -219,6 +221,16 @@ public class BuildManager : MonoBehaviour
         CloseAllPanels();
     }
 
+     // BuildManager'a bir Update fonksiyonu ekleyelim.
+    private void Update()
+    {
+        // Eğer bilgi paneli açıksa ve bir bina yükseltiliyorsa, zamanlayıcıyı güncelle.
+        if (buildingInfoPanel.activeSelf && selectedBuilding != null && selectedBuilding.currentState == BuildingState.Upgrading)
+        {
+            UpdateTimerUI();
+        }
+    }
+
     // Yükseltme butonu tarafından çağrılır.
     public void UpgradeSelectedBuilding()
     {
@@ -248,8 +260,9 @@ public class BuildManager : MonoBehaviour
         GameManager.Instance.AddWood(-woodCost); // Negatif değer göndererek eksiltiyoruz
         GameManager.Instance.AddStone(-stoneCost);
 
-        // Kontrolden geçerse yükseltme işlemini yap.
-        selectedBuilding.UpgradeBuilding();
+        // Yükseltme işlemini BAŞLAT.
+        selectedBuilding.StartUpgrade();
+        GameManager.Instance.RegisterForUpgradeCheck(selectedBuilding);
 
         // Yükseltme sonrası paneldeki bilgileri anında güncelle.
         UpdateBuildingInfoUI();
@@ -262,40 +275,50 @@ public class BuildManager : MonoBehaviour
     // Seçili binaya göre bilgi panelini günceller.
     private void UpdateBuildingInfoUI()
     {
-        if (selectedBuilding == null) return;
+        if(selectedBuilding == null) return;
 
         buildingNameText.text = selectedBuilding.buildingType.buildingName;
-        levelText.text = "Seviye: " + selectedBuilding.currentLevel + " / 20";
+        levelText.text = "Seviye: " + selectedBuilding.currentLevel + " / 25";
 
-        // Maliyet yazısını oluştur
-        if (selectedBuilding.currentLevel < 20)
+        // Binanın durumuna göre paneli ayarla.
+        if (selectedBuilding.currentState == BuildingState.Upgrading)
         {
-            int woodCost = selectedBuilding.GetNextUpgradeWoodCost();
-            int stoneCost = selectedBuilding.GetNextUpgradeStoneCost();
-            upgradeCostText.text = $"Maliyet: {woodCost} Odun, {stoneCost} Taş";
+            // Yükseltiliyorsa:
+            upgradeButton.gameObject.SetActive(false); // Yükselt butonunu gizle
+            upgradeCostText.gameObject.SetActive(false); // Maliyet yazısını gizle
+            timerText.gameObject.SetActive(true); // Zamanlayıcıyı göster
+            UpdateTimerUI(); // Zamanlayıcıyı ilk kez ayarla
         }
-        else
+        else // BuildingState.Idle
         {
-            upgradeCostText.text = "Maksimum Seviye";
+            // Boştaysa:
+            upgradeButton.gameObject.SetActive(true);
+            upgradeCostText.gameObject.SetActive(true);
+            timerText.gameObject.SetActive(false);
+
+            if(selectedBuilding.currentLevel < 25)
+            {
+                int woodCost = selectedBuilding.GetNextUpgradeWoodCost();
+                int stoneCost = selectedBuilding.GetNextUpgradeStoneCost();
+                int time = selectedBuilding.GetNextUpgradeTime();
+                upgradeCostText.text = $"Maliyet: {woodCost} Odun, {stoneCost} Taş, {time} sn";
+            }
+            else
+            {
+                upgradeCostText.text = "Maksimum Seviye";
+            }
+            CheckUpgradeButtonState();
         }
-
-        CheckUpgradeButtonState();
-
-        // Biriken kaynak miktarını göster
-    if (selectedBuilding.buildingType.producedResource != ResourceType.None)
-    {
-        storedAmountText.gameObject.SetActive(true);
-        int amount = (int)selectedBuilding.storedAmount; // Gösterirken tam sayıya çevir
-        int capacity = selectedBuilding.GetCurrentCapacity();
-        storedAmountText.text = $"Biriken: {amount} / {capacity}";
-
-        // Eğer toplanacak bir şey yoksa butonu kapat.
-        collectButton.interactable = (amount > 0);
     }
-    else
+
+    //Zamanlayıcı metnini günceller.
+    private void UpdateTimerUI()
     {
-        storedAmountText.gameObject.SetActive(false);
-    }
+        TimeSpan remainingTime = selectedBuilding.upgradeFinishTime - DateTime.Now;
+        if (remainingTime.TotalSeconds > 0)
+        {
+            timerText.text = $"Kalan Süre: {remainingTime.Hours:00}:{remainingTime.Minutes:00}:{remainingTime.Seconds:00}";
+        }
     }
 
     // Yükseltme butonunun tıklanabilir olup olmadığını kontrol eder.
