@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: BT_Ev
   m_EditorClassIdentifier: 
   buildingName: House
-  maxBuildCount: 5
+  icon: {fileID: 7046621879565142765, guid: 8d9d6bfe176f6984ea9726ac6a3f15f2, type: 3}
   buildingPrefab: {fileID: 1832510371454645342, guid: 5982e03fc23bf7c4d9a08b4aed82c9c7, type: 3}
   levelSprites:
   - {fileID: 7046621879565142765, guid: 8d9d6bfe176f6984ea9726ac6a3f15f2, type: 3}
   - {fileID: 5189912976664785145, guid: 8440bec4eca871b4380f59589a1584c1, type: 3}
   - {fileID: -6178088073977749381, guid: f3dc4f4cc54e75a4c9724e70bce10ec0, type: 3}
+  requiredTownHallLevels: 01000000060000000c000000

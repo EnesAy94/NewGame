@@ -116,10 +116,10 @@ TextureImporter:
       name: ArmoryLvl1_0
       rect:
         serializedVersion: 2
-        x: 3
-        y: 0
-        width: 1405
-        height: 750
+        x: 163
+        y: 36
+        width: 1135
+        height: 674
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}

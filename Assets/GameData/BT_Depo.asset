@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a46e659c7e569b4d927e8130d4d6d4e, type: 3}
+  m_Name: BT_Depo
+  m_EditorClassIdentifier: 
+  buildingName: Stroge
+  icon: {fileID: 3390827561780270340, guid: 1722ce0252493af49951aa3387554f6c, type: 3}
+  buildingPrefab: {fileID: 1832510371454645342, guid: 5982e03fc23bf7c4d9a08b4aed82c9c7, type: 3}
+  levelSprites:
+  - {fileID: 3390827561780270340, guid: 1722ce0252493af49951aa3387554f6c, type: 3}
+  - {fileID: -6848147899358758545, guid: a446504ebdae4f54ea25ac341e4f6a37, type: 3}
+  - {fileID: 2331042541101452397, guid: 64d4a501a43a02a46b321ebfbfcf18b4, type: 3}
+  requiredTownHallLevels: 010000000a000000

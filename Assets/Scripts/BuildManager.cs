@@ -1,9 +1,16 @@
 using UnityEngine;
 using UnityEngine.UI; // Button gibi UI elemanları için bu gerekli.
 using TMPro;         // TextMeshPro kullanacağımız için bu gerekli.
+using System.Collections.Generic;
 
 public class BuildManager : MonoBehaviour
 {
+
+    [Header("Genel Ayarlar")]
+    public List<BuildingType> allBuildingTypes; // Bütün bina asset'lerini buraya sürükleyeceğiz.
+    public GameObject buildingButtonPrefab; // Butonlarımızı oluşturacağımız prefab.
+    public Transform buttonContainer; // Butonların içine oluşturulacağı panel (GridLayoutGroup'lu).
+
     [Header("İnşaat Menüsü")]
     public GameObject buildMenuPanel;
 
@@ -44,7 +51,7 @@ public class BuildManager : MonoBehaviour
 
         if (buildingInfoPanel != null)
             buildingInfoPanel.SetActive(false);
-        
+
         // Seçimleri temizle
         selectedPlot = null;
         selectedBuilding = null;
@@ -53,10 +60,64 @@ public class BuildManager : MonoBehaviour
     // İnşaat menüsünü açar.
     public void OpenBuildMenu(BuildingPlot plot)
     {
-        CloseAllPanels(); // Önce diğer tüm panelleri kapat.
-
+        CloseAllPanels();
         selectedPlot = plot;
         buildMenuPanel.SetActive(true);
+
+        UpdateBuildMenu(); // Yeni dinamik menü oluşturma fonksiyonu.
+    }
+
+    void UpdateBuildMenu()
+    {
+        // 1. Konteynerdeki eski butonları temizle.
+        foreach (Transform child in buttonContainer)
+        {
+            Destroy(child.gameObject);
+        }
+
+        // 2. Tüm bina tipleri için yeni butonlar oluştur.
+        foreach (BuildingType type in allBuildingTypes)
+        {
+            // Buton prefab'ından yeni bir buton oluştur ve konteynerin içine koy.
+            GameObject buttonGO = Instantiate(buildingButtonPrefab, buttonContainer);
+            Button newButton = buttonGO.GetComponent<Button>();
+
+            Image iconImage = buttonGO.transform.Find("IconImage").GetComponent<Image>();
+            TextMeshProUGUI buttonText = buttonGO.GetComponentInChildren<TextMeshProUGUI>();
+
+            // İkonu ve yazıyı ata.
+            iconImage.sprite = type.icon;
+            buttonText.text = type.buildingName;
+
+            // 3. Butonun tıklanabilir olup olmadığını kontrol et.
+            int currentCount = 0;
+            if (GameManager.Instance.buildingCounts.ContainsKey(type))
+            {
+                currentCount = GameManager.Instance.buildingCounts[type];
+            }
+
+            bool canBuild = true;
+            if (currentCount >= type.requiredTownHallLevels.Length)
+            {
+                canBuild = false; // Max sayıya ulaşıldı.
+            }
+            else
+            {
+                int requiredLevel = type.requiredTownHallLevels[currentCount];
+                if (GameManager.Instance.townHallLevel < requiredLevel)
+                {
+                    canBuild = false; // Ana merkez seviyesi yetersiz.
+                }
+            }
+
+            // Butonun durumunu ayarla.
+            newButton.interactable = canBuild;
+
+            // 4. Butona doğru tıklama olayını ata.
+            // Bu kısım önemli, döngüdeki 'type' değişkenini doğrudan kullanamayız.
+            BuildingType currentType = type;
+            newButton.onClick.AddListener(() => BuildBuilding(currentType));
+        }
     }
 
     // Bina bilgi/yükseltme panelini açar.
@@ -74,8 +135,8 @@ public class BuildManager : MonoBehaviour
         upgradeButton.onClick.RemoveAllListeners();
         upgradeButton.onClick.AddListener(UpgradeSelectedBuilding);
     }
-    
-      public void CloseActivePanel()
+
+    public void CloseActivePanel()
     {
         CloseAllPanels();
     }
@@ -87,26 +148,33 @@ public class BuildManager : MonoBehaviour
     // İnşaat menüsündeki butonlar tarafından çağrılır.
     public void BuildBuilding(BuildingType buildingToBuild)
     {
-        // Gerekli kontroller
+        // 1. Mevcut bina sayısını al.
         int currentCount = 0;
         if (GameManager.Instance.buildingCounts.ContainsKey(buildingToBuild))
         {
             currentCount = GameManager.Instance.buildingCounts[buildingToBuild];
         }
 
-        if (currentCount >= buildingToBuild.maxBuildCount)
+        // 2. Maksimum inşaat limitine ulaşılmış mı? (Dizinin uzunluğu max limiti belirler)
+        if (currentCount >= buildingToBuild.requiredTownHallLevels.Length)
         {
-            Debug.Log(buildingToBuild.buildingName + " için maksimum sayıya ulaştınız!");
+            Debug.Log(buildingToBuild.buildingName + " için maksimum inşaat sayısına ulaştınız!");
             return;
         }
 
-        if (!buildingToBuild.name.Contains("AnaMerkez") && currentCount >= GameManager.Instance.GetAllowedBuildCount(buildingToBuild))
+        // 3. Bir sonraki binayı inşa etmek için gereken Ana Merkez seviyesini al.
+        // Dizinin 'currentCount' index'indeki eleman, bir sonraki binanın kuralıdır.
+        int requiredLevel = buildingToBuild.requiredTownHallLevels[currentCount];
+
+        // 4. Oyuncunun Ana Merkez seviyesi yeterli mi?
+        if (GameManager.Instance.townHallLevel < requiredLevel)
         {
-            Debug.Log("Daha fazla " + buildingToBuild.buildingName + " inşa etmek için Ana Merkez seviyenizi yükseltin!");
+            Debug.Log(buildingToBuild.buildingName + " inşa etmek için Ana Merkezinizin " + requiredLevel + ". seviye olması gerekiyor!");
             return;
         }
 
-        // Kontrollerden geçerse binayı oluştur.
+        // --- Tüm kontrollerden geçti, inşa et! ---
+
         GameObject newBuildingObject = Instantiate(buildingToBuild.buildingPrefab, selectedPlot.transform.position, Quaternion.identity);
         BuildingInstance newBuildingInstance = newBuildingObject.GetComponent<BuildingInstance>();
         newBuildingInstance.buildingType = buildingToBuild;
@@ -116,7 +184,7 @@ public class BuildManager : MonoBehaviour
         GameManager.Instance.OnBuildingConstructed(buildingToBuild);
         Destroy(selectedPlot.gameObject);
 
-        CloseAllPanels(); // İşlem bitince paneli kapat.
+        CloseAllPanels();
     }
 
     // Yükseltme butonu tarafından çağrılır.
@@ -141,7 +209,7 @@ public class BuildManager : MonoBehaviour
         // Yükseltme sonrası paneldeki bilgileri anında güncelle.
         UpdateBuildingInfoUI();
     }
-    
+
     #endregion
 
     #region UI Güncelleme
@@ -149,10 +217,10 @@ public class BuildManager : MonoBehaviour
     // Seçili binaya göre bilgi panelini günceller.
     private void UpdateBuildingInfoUI()
     {
-        if(selectedBuilding == null) return;
+        if (selectedBuilding == null) return;
 
         buildingNameText.text = selectedBuilding.buildingType.buildingName;
-        levelText.text = "Seviye: " + selectedBuilding.currentLevel + " / 25";
+        levelText.text = "Seviye: " + selectedBuilding.currentLevel + " / 20";
         CheckUpgradeButtonState();
     }
 
@@ -162,7 +230,7 @@ public class BuildManager : MonoBehaviour
         bool canUpgrade = true;
 
         // Max seviyeye ulaştıysa kapat.
-        if (selectedBuilding.currentLevel >= 25)
+        if (selectedBuilding.currentLevel >= 20)
         {
             canUpgrade = false;
         }

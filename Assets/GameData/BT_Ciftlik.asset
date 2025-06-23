@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: BT_Ciftlik
   m_EditorClassIdentifier: 
   buildingName: Farm
-  maxBuildCount: 5
+  icon: {fileID: -2491910411405007273, guid: a4734cffb44bfe34cbec13fef5b6a9bc, type: 3}
   buildingPrefab: {fileID: 1832510371454645342, guid: 5982e03fc23bf7c4d9a08b4aed82c9c7, type: 3}
   levelSprites:
   - {fileID: -2491910411405007273, guid: a4734cffb44bfe34cbec13fef5b6a9bc, type: 3}
   - {fileID: -7480165400084844819, guid: 4d7a77f2c887e8441b7bce6c41b45f90, type: 3}
   - {fileID: -4032244039367755832, guid: c71c38c3b4bb8a943b776956735220c7, type: 3}
+  requiredTownHallLevels: 01000000060000000c000000

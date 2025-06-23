@@ -116,10 +116,10 @@ TextureImporter:
       name: FarmLvl1_0
       rect:
         serializedVersion: 2
-        x: 146
-        y: 22
-        width: 1141
-        height: 740
+        x: 197
+        y: 51
+        width: 973
+        height: 689
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}

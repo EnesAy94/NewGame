@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: BT_Cephanelik
   m_EditorClassIdentifier: 
   buildingName: Armory
-  maxBuildCount: 5
+  icon: {fileID: 642752419542264671, guid: ece3e5cdd7dfd3745a84f8826dcdae06, type: 3}
   buildingPrefab: {fileID: 1832510371454645342, guid: 5982e03fc23bf7c4d9a08b4aed82c9c7, type: 3}
   levelSprites:
   - {fileID: 642752419542264671, guid: ece3e5cdd7dfd3745a84f8826dcdae06, type: 3}
   - {fileID: 9181181830505887929, guid: 11a8603ed48d95e4995c3ba133c5758c, type: 3}
   - {fileID: 5210155562020427125, guid: 657c0aa953f3259439525f47b339bf44, type: 3}
+  requiredTownHallLevels: 050000000f000000

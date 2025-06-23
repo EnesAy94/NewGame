@@ -1,14 +1,19 @@
 using UnityEngine;
 
-// Bu satır sayesinde Unity'nin "Create" menüsünde bu objeyi oluşturma seçeneği çıkar.
 [CreateAssetMenu(fileName = "New Building Type", menuName = "Game/Building Type")]
 public class BuildingType : ScriptableObject
 {
     [Header("Genel Bilgiler")]
-    public string buildingName; // "Ana Merkez", "Çiftlik" gibi
-    public int maxBuildCount = 5; // En fazla kaç tane inşa edilebilir?
-    
+    public string buildingName;
+    public Sprite icon;
+    public GameObject buildingPrefab;
+
     [Header("Seviye ve Görsel")]
-    public GameObject buildingPrefab; // Bu binanın temel prefab'ı
-    public Sprite[] levelSprites; // Seviyeye göre değişen görseller (0: Seviye 1-4, 1: Seviye 5-14, 2: Seviye 15+)
+    public Sprite[] levelSprites;
+
+    [Header("İnşaat Kuralları")]
+    // Bu dizi, her bir binanın hangi Ana Merkez seviyesinde inşa edilebileceğini belirler.
+    // Örn: [1, 6, 12] -> 1. bina için sv. 1, 2. için sv. 6, 3. için sv. 12 gerekir.
+    // Dizinin eleman sayısı, o binadan en fazla kaç tane inşa edilebileceğini de belirler.
+    public int[] requiredTownHallLevels;
 }

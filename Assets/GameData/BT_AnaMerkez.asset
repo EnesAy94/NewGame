@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: BT_AnaMerkez
   m_EditorClassIdentifier: 
   buildingName: Headquarter
-  maxBuildCount: 1
+  icon: {fileID: 5782563535291750248, guid: 5489bddb170a9bb43a21c4066228d0e1, type: 3}
   buildingPrefab: {fileID: 1832510371454645342, guid: 5982e03fc23bf7c4d9a08b4aed82c9c7, type: 3}
   levelSprites:
   - {fileID: 5782563535291750248, guid: 5489bddb170a9bb43a21c4066228d0e1, type: 3}
   - {fileID: -3642402655754223288, guid: db14d3ec526db98448a18563c3b5fcbb, type: 3}
   - {fileID: -5185009217793671719, guid: 85dcfb6cc1a762b45b12a90b4d11f174, type: 3}
+  requiredTownHallLevels: 00000000

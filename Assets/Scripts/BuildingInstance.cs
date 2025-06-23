@@ -74,7 +74,7 @@ public class BuildingInstance : MonoBehaviour, IPointerClickHandler
     public void UpgradeBuilding()
     {
         // Max seviye kontrolü
-        if (currentLevel >= 25)
+        if (currentLevel >= 20)
         {
             Debug.Log(buildingType.buildingName + " zaten maksimum seviyede!");
             return;

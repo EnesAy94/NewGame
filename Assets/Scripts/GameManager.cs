@@ -39,15 +39,4 @@ public class GameManager : MonoBehaviour
             townHallLevel = 1;
         }
     }
-
-    // Belli bir binadan kaç tane inşa edebiliriz?
-    public int GetAllowedBuildCount(BuildingType type)
-    {
-        if (townHallLevel == 0 && !type.name.Contains("AnaMerkez")) return 0; // Ana Merkez yoksa başka bir şey yapılamaz.
-        if (townHallLevel < 5) return 1;
-        if (townHallLevel < 10) return 2;
-        if (townHallLevel < 15) return 3;
-        if (townHallLevel < 20) return 4;
-        return 5; // Seviye 20 ve üstü
-    }
 }

@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a46e659c7e569b4d927e8130d4d6d4e, type: 3}
+  m_Name: BT_OdunYeri
+  m_EditorClassIdentifier: 
+  buildingName: WoodCamp
+  icon: {fileID: 4624751243867078187, guid: b8e952acc2bb24045b32c7b8a7641010, type: 3}
+  buildingPrefab: {fileID: 1832510371454645342, guid: 5982e03fc23bf7c4d9a08b4aed82c9c7, type: 3}
+  levelSprites:
+  - {fileID: 4624751243867078187, guid: b8e952acc2bb24045b32c7b8a7641010, type: 3}
+  - {fileID: 7041002500543240141, guid: 265a6d22c8dedb249bd1e53642915ba2, type: 3}
+  - {fileID: -257318939551883500, guid: 7deca968468ea4d4bb2054ef786fbc72, type: 3}
+  requiredTownHallLevels: 01000000060000000c000000
