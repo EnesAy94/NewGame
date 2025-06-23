@@ -205,6 +205,7 @@ public class BuildManager : MonoBehaviour
         newBuildingInstance.buildingType = buildingToBuild;
         newBuildingInstance.currentLevel = 1;
         newBuildingInstance.UpdateBuildingVisuals();
+        newBuildingInstance.OnConstructed();
 
         // YENİ SATIR: Üretim binası ise GameManager'a kaydettir.
         if (newBuildingInstance.buildingType.producedResource != ResourceType.None)

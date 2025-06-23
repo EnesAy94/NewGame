@@ -19,6 +19,12 @@ public class GameManager : MonoBehaviour
     public int population = 50;
     public int gold = 100;
 
+    [Header("Oyuncu Kapasiteleri")]
+    public int foodCapacity = 1000;
+    public int woodCapacity = 1000;
+    public int stoneCapacity = 1000;
+    public int populationCapacity = 100;
+
     // Kaynaklar her değiştiğinde bu olay tetiklenecek.
     public static event Action OnResourcesChanged;
 
@@ -50,7 +56,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-     // Bina inşa edildiğinde veya yok edildiğinde bu listeyi güncelleyeceğiz.
+    // Bina inşa edildiğinde veya yok edildiğinde bu listeyi güncelleyeceğiz.
     public void RegisterProductionBuilding(BuildingInstance building)
     {
         if (!productionBuildings.Contains(building))
@@ -62,49 +68,57 @@ public class GameManager : MonoBehaviour
         if (productionBuildings.Contains(building))
             productionBuildings.Remove(building);
     }
-    
+
     // Belirli bir süre için kaynak üretir.
     private void ProduceResources(float seconds)
-{
-    // Artık bu fonksiyondan sonra OnResourcesChanged çağırmıyoruz,
-    // çünkü kaynaklar sadece binaların içinde birikiyor.
-
-    foreach (var building in productionBuildings)
     {
-        // Binanın mevcut kapasitesini al.
-        int capacity = building.GetCurrentCapacity();
+        // Artık bu fonksiyondan sonra OnResourcesChanged çağırmıyoruz,
+        // çünkü kaynaklar sadece binaların içinde birikiyor.
 
-        // Eğer bina zaten tam kapasitede ise, üretim yapma.
-        if (building.storedAmount >= capacity)
+        foreach (var building in productionBuildings)
         {
-            continue; // Döngünün bir sonraki elemanına geç.
-        }
+            // Binanın mevcut kapasitesini al.
+            int capacity = building.GetCurrentCapacity();
 
-        // Üretim miktarını hesapla.
-        float productionRatePerHour = building.GetProductionRate();
-        float productionPerSecond = productionRatePerHour / 3600f;
-        float producedAmount = productionPerSecond * seconds;
+            // Eğer bina zaten tam kapasitede ise, üretim yapma.
+            if (building.storedAmount >= capacity)
+            {
+                continue; // Döngünün bir sonraki elemanına geç.
+            }
 
-        // Üretilen miktarı binanın deposuna ekle.
-        building.storedAmount += producedAmount;
+            // Üretim miktarını hesapla.
+            float productionRatePerHour = building.GetProductionRate();
+            float productionPerSecond = productionRatePerHour / 3600f;
+            float producedAmount = productionPerSecond * seconds;
 
-        // Eğer ekleme sonrası kapasite aşıldıysa, kapasiteye eşitle.
-        if (building.storedAmount > capacity)
-        {
-            building.storedAmount = capacity;
+            // Üretilen miktarı binanın deposuna ekle.
+            building.storedAmount += producedAmount;
+
+            // Eğer ekleme sonrası kapasite aşıldıysa, kapasiteye eşitle.
+            if (building.storedAmount > capacity)
+            {
+                building.storedAmount = capacity;
+            }
         }
     }
-}
 
     public void AddFood(int amount)
     {
         food += amount;
-        // Arayüze "kaynaklar değişti, kendini güncelle!" diye haber ver.
+        // Eğer ekleme sonrası kapasite aşıldıysa, kapasiteye eşitle.
+        if (food > foodCapacity)
+        {
+            food = foodCapacity;
+        }
         OnResourcesChanged?.Invoke();
     }
     public void AddWood(int amount)
     {
         wood += amount;
+        if (wood > woodCapacity)
+        {
+            wood = woodCapacity;
+        }
         OnResourcesChanged?.Invoke();
     }
     public void AddGold(int amount)
@@ -115,13 +129,27 @@ public class GameManager : MonoBehaviour
     public void AddPopulation(int amount)
     {
         population += amount;
+        if (population > populationCapacity)
+        {
+            population = populationCapacity;
+        }
         OnResourcesChanged?.Invoke();
     }
     public void AddStone(int amount)
     {
         stone += amount;
+        if (stone > stoneCapacity)
+        {
+            stone = stoneCapacity;
+        }
         OnResourcesChanged?.Invoke();
     }
+
+    public void NotifyResourcesChanged()
+    {
+        OnResourcesChanged?.Invoke();
+    }
+
 
     // Bir bina inşa edildiğinde bu fonksiyon çağrılacak.
     public void OnBuildingConstructed(BuildingType type)

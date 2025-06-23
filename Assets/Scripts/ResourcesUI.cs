@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI; // Image için bu gerekli.
 using TMPro; // TextMeshPro için bu gerekli.
 
 public class ResourcesUI : MonoBehaviour
@@ -9,6 +10,12 @@ public class ResourcesUI : MonoBehaviour
     public TextMeshProUGUI woodText;
     public TextMeshProUGUI populationText;
     public TextMeshProUGUI goldText;
+
+    [Header("Doluluk Barları")]
+    public Image foodFillBar;
+    public Image woodFillBar;
+    public Image stoneFillBar;
+    public Image populationFillBar;
 
     // Bu script aktif olduğunda...
     private void OnEnable()
@@ -33,15 +40,26 @@ public class ResourcesUI : MonoBehaviour
     // GameManager'dan gelen "güncelle" sinyaliyle bu fonksiyon çalışır.
     private void UpdateResourceTexts()
     {
-        // GameManager'daki güncel verileri alıp metinlere yaz.
-        // .ToString() bir sayıyı metne çevirir.
-        if (GameManager.Instance != null)
-        {
-            foodText.text = GameManager.Instance.food.ToString();
-            woodText.text = GameManager.Instance.wood.ToString();
-            populationText.text = GameManager.Instance.population.ToString();
-            goldText.text = GameManager.Instance.gold.ToString();
-            stoneText.text = GameManager.Instance.stone.ToString();
-        }
+        if (GameManager.Instance == null) return;
+        
+        var gm = GameManager.Instance;
+
+        // Food
+        foodText.text = $"{gm.food}";
+        // Doluluk oranını hesapla (0 ile 1 arasında bir değer)
+        // (float) dönüşümü, tamsayı bölmesi yerine ondalıklı bölme yapılmasını sağlar.
+        foodFillBar.fillAmount = (float)gm.food / gm.foodCapacity;
+
+        // Wood
+        woodText.text = $"{gm.wood}";
+        woodFillBar.fillAmount = (float)gm.wood / gm.woodCapacity;
+
+        // Stone
+        stoneText.text = $"{gm.stone}";
+        stoneFillBar.fillAmount = (float)gm.stone / gm.stoneCapacity;
+
+        // Population
+        populationText.text = $"{gm.population}";
+        populationFillBar.fillAmount = (float)gm.population / gm.populationCapacity;
     }
 }

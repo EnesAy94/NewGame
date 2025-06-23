@@ -115,36 +115,66 @@ public class BuildingInstance : MonoBehaviour, IPointerClickHandler
         {
             GameManager.Instance.townHallLevel = currentLevel;
         }
-
+        // Yükseltme sonrası bonusu uygula.
+        ApplyCapacityBonus();
         Debug.Log(buildingType.buildingName + " binası " + currentLevel + ". seviyeye yükseltildi.");
     }
-    
+
     // BuildingInstance.cs'in içine bu yeni fonksiyonu ekle
-public void CollectResources()
-{
-    // Toplanacak miktarı tam sayı olarak al.
-    int amountToCollect = (int)storedAmount;
-
-    // Eğer toplanacak bir şey yoksa, hiçbir şey yapma.
-    if (amountToCollect <= 0) return;
-
-    // İlgili kaynağı GameManager'a ekle.
-    switch (buildingType.producedResource)
+    public void CollectResources()
     {
-        case ResourceType.Food:
-            GameManager.Instance.AddFood(amountToCollect);
-            break;
-        case ResourceType.Wood:
-            GameManager.Instance.AddWood(amountToCollect);
-            break;
-        case ResourceType.Stone:
-            GameManager.Instance.AddStone(amountToCollect);
-            break;
+        // Toplanacak miktarı tam sayı olarak al.
+        int amountToCollect = (int)storedAmount;
+
+        // Eğer toplanacak bir şey yoksa, hiçbir şey yapma.
+        if (amountToCollect <= 0) return;
+
+        // İlgili kaynağı GameManager'a ekle.
+        switch (buildingType.producedResource)
+        {
+            case ResourceType.Food:
+                GameManager.Instance.AddFood(amountToCollect);
+                break;
+            case ResourceType.Wood:
+                GameManager.Instance.AddWood(amountToCollect);
+                break;
+            case ResourceType.Stone:
+                GameManager.Instance.AddStone(amountToCollect);
+                break;
+        }
+
+        // Binanın içindeki birikmiş miktarı sıfırla.
+        storedAmount = 0f;
+
+        Debug.Log($"{amountToCollect} {buildingType.producedResource} toplandı!");
+    }
+    
+    public void OnConstructed()
+    {
+        ApplyCapacityBonus();
     }
 
-    // Binanın içindeki birikmiş miktarı sıfırla.
-    storedAmount = 0f;
-    
-    Debug.Log($"{amountToCollect} {buildingType.producedResource} toplandı!");
-}
+private void ApplyCapacityBonus()
+    {
+        // Eğer bu bina bir kapasite bonusu vermiyorsa, hiçbir şey yapma.
+        if (buildingType.capacityBonus <= 0) return;
+
+        // Hangi kapasiteyi artıracağımızı binanın adına göre belirleyelim.
+        // Bu yöntem basit ama etkilidir.
+        if (buildingType.name.Contains("Depo"))
+        {
+            GameManager.Instance.foodCapacity += buildingType.capacityBonus;
+            GameManager.Instance.woodCapacity += buildingType.capacityBonus;
+            GameManager.Instance.stoneCapacity += buildingType.capacityBonus;
+            Debug.Log($"Depo bonusu uygulandı! Yeni hammadde kapasitesi: {GameManager.Instance.foodCapacity}");
+        }
+        else if (buildingType.name.Contains("Ev"))
+        {
+            GameManager.Instance.populationCapacity += buildingType.capacityBonus;
+            Debug.Log($"Ev bonusu uygulandı! Yeni nüfus kapasitesi: {GameManager.Instance.populationCapacity}");
+        }
+
+        // Arayüzün de kapasiteyi göstermesi için güncelleme sinyali gönderelim.
+        GameManager.Instance.NotifyResourcesChanged();
+    }
 }

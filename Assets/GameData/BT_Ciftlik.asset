@@ -21,10 +21,11 @@ MonoBehaviour:
   - {fileID: -4032244039367755832, guid: c71c38c3b4bb8a943b776956735220c7, type: 3}
   requiredTownHallLevels: 010000000a000000
   producedResource: 1
-  baseProductionPerHour: 100
+  baseProductionPerHour: 3600
   productionIncreasePerLevel: 100
   baseUpgradeWoodCost: 75
   baseUpgradeStoneCost: 50
   costIncreaseFactor: 1.5
   baseStorageCapacity: 300
   capacityIncreasePerLevel: 100
+  capacityBonus: 0

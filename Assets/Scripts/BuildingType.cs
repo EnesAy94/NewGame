@@ -26,4 +26,5 @@ public class BuildingType : ScriptableObject
     public float costIncreaseFactor; // Her seviye atladığında maliyet ne kadar artacak? (Örn: 1.5 -> %50 artış)
     public int baseStorageCapacity; // 1. seviyedeki depolama kapasitesi.
     public int capacityIncreasePerLevel; // Her seviyede kapasite ne kadar artacak?
+    public int capacityBonus; // Bu bina inşa edildiğinde veya seviye atladığında ne kadar kapasite verir?
 }

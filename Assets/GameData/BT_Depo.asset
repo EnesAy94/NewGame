@@ -23,8 +23,9 @@ MonoBehaviour:
   producedResource: 0
   baseProductionPerHour: 0
   productionIncreasePerLevel: 0
-  baseUpgradeWoodCost: 0
-  baseUpgradeStoneCost: 0
-  costIncreaseFactor: 0
+  baseUpgradeWoodCost: 200
+  baseUpgradeStoneCost: 200
+  costIncreaseFactor: 1.5
   baseStorageCapacity: 0
-  capacityIncreasePerLevel: 0
+  capacityIncreasePerLevel: 1000
+  capacityBonus: 1000
