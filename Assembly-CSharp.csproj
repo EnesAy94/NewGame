@@ -48,12 +48,16 @@
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\6000.1.8f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\Data\WeaponData.cs" />
     <Compile Include="Assets\Scripts\CameraPanControl.cs" />
     <Compile Include="Assets\Scripts\BuildingType.cs" />
     <Compile Include="Assets\Scripts\BuildingPlot.cs" />
     <Compile Include="Assets\Scripts\BuildingInstance.cs" />
+    <Compile Include="Assets\Scripts\Data\CharacterData.cs" />
+    <Compile Include="Assets\Scripts\CharacterInstance.cs" />
     <Compile Include="Assets\Scripts\MainMenuManager.cs" />
     <Compile Include="Assets\Scripts\ExpandableMenu.cs" />
+    <Compile Include="Assets\Scripts\CharacterRosterUI.cs" />
     <Compile Include="Assets\Scripts\GameManager.cs" />
     <Compile Include="Assets\Scripts\BuildManager.cs" />
     <Compile Include="Assets\Scripts\ResourcesUI.cs" />

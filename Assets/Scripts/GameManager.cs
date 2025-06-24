@@ -31,6 +31,13 @@ public class GameManager : MonoBehaviour
     // Sahnedeki tüm üretim binalarının bir listesi.
     private List<BuildingInstance> productionBuildings = new List<BuildingInstance>();
     private List<BuildingInstance> upgradingBuildings = new List<BuildingInstance>();
+    
+    [Header("Oyuncu Karakterleri")]
+    public List<CharacterInstance> ownedCharacters = new List<CharacterInstance>();
+    
+    [Header("Başlangıç Verileri")]
+    public List<CharacterData> startingCharacters; // Inspector'dan başlangıç karakterlerini sürükleyeceğiz.
+
     private float productionTimer = 0f;
 
     private void Awake()
@@ -44,6 +51,21 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        // Eğer oyuncunun hiç karakteri yoksa (oyun ilk defa başlıyorsa), başlangıç karakterlerini ver.
+        if (ownedCharacters.Count == 0)
+        {
+            GiveStartingCharacters();
+        }
+    }
+
+    void GiveStartingCharacters()
+    {
+        foreach (CharacterData charData in startingCharacters)
+        {
+            // Her bir başlangıç karakteri için yeni bir 'instance' oluştur ve listeye ekle.
+            ownedCharacters.Add(new CharacterInstance(charData));
+        }
+        Debug.Log(ownedCharacters.Count + " adet başlangıç karakteri verildi.");
     }
 
     void Update()
